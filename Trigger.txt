@@ -1,0 +1,86 @@
+
+
+
+program:-
+create or replace trigger trg_library_adt
+after update or delete on Library for each row
+declare
+diff_price float;
+begin
+if updating then
+insert into Library_Audit values (:old.book_id,:old.book_name,:old.price);
+diff_price:=:new.price-:old.price;
+dbms_output.put_line('Difference between price:'||diff_price);
+elsif deleting then
+insert into Library_Audit values (:old.book_id,:old.book_name,:old.price);
+end if;
+end;
+/
+
+
+
+
+
+
+Last successful login time: Tue Oct 10 2825 03:16:06 -07:00
+OF
+403 KB
+Connected to:
+Oracle Database 21c Express Edition Release 21.0.0.0.0-Production
+Version 21.3.0.0.0
+DF
+206 KB
+SQL> set serveroutput on
+SQL> create table Library(book_id int, book_nase varchar(56),price float);
+
+Table created.
+
+SQL> create table Library Audit as select from Library;
+
+Table created.
+
+SQL> insert into Library values(501, 'LP',200);
+1 row created.
+
+SQL> insert into Library values (502, 'SPOS', 300);
+
+1 row created.
+SQL> insert into Library values(503, 'DBMS, 500);
+
+I row created.
+SQL> insert into Library values(518, 'CHS", 148);
+
+1 row created.
+
+SQL> insert into Library values(515,107,450);
+1 row created.
+
+Trigger created.
+
+SQL> select * from library;
+PRICE
+208
+300
+508
+340
+BOOK ID BOOK NAME
+501 LP
+502 SPOS
+503 DBMS
+518 CNS
+515 IOT
+
+SQL> UPDATE Library SET price-300 where book_id=583; Difference between price:-208
+1 row updated.
+
+SQL> delete from library where book_id=516;
+1 row deleted.
+
+SQL> select from Library_audit;
+BOOK ID BOOK NAME
+503 DBMS
+PRICE
+500
+348
+518 CNS
+SQL
